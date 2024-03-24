@@ -8,6 +8,5 @@
 .canvas3d {
     min-width: 0;
     flex:1;
-
     box-sizing: border-box;
 }

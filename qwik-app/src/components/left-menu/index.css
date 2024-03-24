@@ -3,7 +3,7 @@
     background-color: green;
     display: flex;
     flex-direction: column;
-    width: fit-content;
+    flex:.25;
     height: 100vh;
     align-items: center;
     box-sizing: border-box;
