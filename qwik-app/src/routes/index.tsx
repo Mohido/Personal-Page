@@ -17,7 +17,7 @@ export type DetailsMap = {[key: string]: Details};
 export default component$(() => {
   useStyles$(IndexCSS);
   const details : {[key:string]:DetailsMap} ={
-      "Experiences": {
+      "Experience": {
         nokia: {
           imgURL: "https://logo.clearbit.com/nokia.com",
           title: "Software Developer (Nokia) [2021 - 2023]",
@@ -133,34 +133,44 @@ export default component$(() => {
         networkplus : {
           imgURL: "/NetworkPlus Logo Certified CE.jpg",
           title: "CompTIA Network+",
-          description: "CompTIA Network+ is a certification that covers networking concepts, troubleshooting, operations, tools, and security as well as IT infrastructure.",
+          description: "CompTIA Network+ is a certification that covers networking concepts, troubleshooting, operations, tools, and security as well as IT infrastructure. You can verify my certificate with the Code: [784928BR12V11T32] and Verify at: [http://verify.CompTIA.org]",
         },
         securityplus : {
           imgURL: "/SecurityPlus Logo Certified CE.jpg",
           title: "CompTIA Security+",
-          description: "CompTIA Security+ is a global certification that validates the baseline skills you need to perform core security functions and pursue an IT security career.",
+          description: "CompTIA Security+ is a global certification that validates the baseline skills you need to perform core security functions and pursue an IT security career.  You can verify my certificate with the Code: [L6BQ5BFTLBR41F57] and Verify at: [http://verify.CompTIA.org]",
         },
       },
       "Reach Me": {
         email: {
           imgURL: "https://upload.wikimedia.org/wikipedia/commons/8/8c/Gmail_Icon_%282013-2020%29.svg",
           title: "Personal Email",
-          description: "You can reach me at this email address. Expect an answer within 24 hours.",
+          description: "You can reach me at this email address: mohidoart@gmail.com. Expect an answer within 3 days.",
         },
-        x : {
-          imgURL: "https://th.bing.com/th/id/OIP.czrnEGcGZejUl3yJc590YgHaG9?rs=1&pid=ImgDetMain",
-          title: "X (Twitter)",
-          description: "You can reach me at this email address. Expect an answer within 24 hours.",
-        },
+        // x : {
+        //   imgURL: "https://th.bing.com/th/id/OIP.czrnEGcGZejUl3yJc590YgHaG9?rs=1&pid=ImgDetMain",
+        //   title: "X (Twitter)",
+        //   description: "You can reach me at this email address. Expect an answer within 24 hours.",
+        // },
         linkedin : {
           imgURL: "https://th.bing.com/th/id/OIP.d9YMY3jpZr_ZxliOr3xMYQHaHa?rs=1&pid=ImgDetMain",
           title: "LinkedIn",
-          description: "Follow me on Linkedin to get updates on my professional life.",
+          description: "Follow me on Linkedin to get updates on my professional life. My user id is [in/mohammed-al-mahdawi-a14906206]",
+        },
+        youtube : {
+          imgURL: "https://upload.wikimedia.org/wikipedia/commons/7/72/YouTube_social_white_square_%282017%29.svg",
+          title: "YouTube",
+          description: "Subscribe to my YouTube channel to get updates on my personal life. My programming channel is [www.youtube.com/@MohidoTech]. Also, my art channel is: [www.youtube.com/@MohidoArt]",
+        },
+        artstation : {
+          imgURL: "/artstation.jpg",
+          title: "ArtStation",
+          description: "Follow me on ArtStation to get updates on my art life. My user id is [mohidoart]",
         },
       }
     };
 
-    const activeID = useSignal<string>("Experiences");
+    const activeID = useSignal<string>("Experience");
     const leftMenuClick$ = $((item: string) => {
       activeID.value = item;
     });
@@ -183,8 +193,6 @@ export default component$(() => {
       </div>
       {
         modalStore.active && 
-        modalStore.title &&
-        details[activeID.value][modalStore.title] &&
           <div class="modal">
             <div class="modal-content">
               <span class="close">

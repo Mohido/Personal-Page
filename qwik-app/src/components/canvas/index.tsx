@@ -1,7 +1,7 @@
-import { $, QRL, component$, noSerialize, useOn, useSignal, useStore, useStyles$, useVisibleTask$ } from "@builder.io/qwik";
+import { $, type QRL, component$, noSerialize, useOn, useSignal, useStore, useStyles$, useVisibleTask$, type NoSerialize } from "@builder.io/qwik";
 import IndexCSS from "./index.css?inline";
 import * as THREE from 'three';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import style from './style.css?inline';
 
@@ -20,7 +20,7 @@ export interface Canvas3DNonSerializableStore{
     mesh? : THREE.Mesh  // The mesh which will be instanced from
     raycaster? : THREE.Raycaster,
     mouse? : THREE.Vector2
-};
+}
 
 
 /**
@@ -55,13 +55,15 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     
     // canvas to scene hashmap. Each key represents a scene
     const ctos : {[key: string]: Canvas3D} = {};
-    const threeStore : Canvas3DNonSerializableStore = {};
+    const threeStore : NoSerialize<Canvas3DNonSerializableStore> = noSerialize<Canvas3DNonSerializableStore>({});
 
 
     /**
      * used to initialize the renderer and the camera if they are not yet initialized. 
      */
     const initRenderer$ = $(async ()=>{
+        if(!threeStore)
+            return;
         // Create Renderer
         if(!threeStore.renderer){
             canvasStore.width = canvasRef.value?.clientWidth || 500;
@@ -74,10 +76,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
         // Create Camera
         if(!threeStore.camera){
             threeStore.camera = new THREE.PerspectiveCamera( 75, canvasStore.width / canvasStore.height, 0.1, 1000 );
-            if(threeStore.camera){
-                threeStore.camera && (threeStore.camera.position.z = 10);
-                // canvasStore.controls = noSerialize(new OrbitControls(canvasStore.camera, canvasStore.renderer?.domElement));
-            }
+            threeStore.camera.position.z = 10;
+            // canvasStore.controls = noSerialize(new OrbitControls(canvasStore.camera, canvasStore.renderer?.domElement)); 
         }
 
         // Load the mesh
@@ -95,6 +95,9 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
      * Used to resize the renderer in case the canvasStore is not equal to the props.
      */
     const resizeRenderer$ = $(()=>{
+        if(!threeStore)
+            return;
+
         if( canvasStore.width !== canvasRef.value?.clientWidth || canvasStore.height !== canvasRef.value?.clientHeight){
             canvasStore.height = canvasRef.value?.clientHeight || 500;
             canvasStore.width = canvasRef.value?.clientWidth || 500;
@@ -110,6 +113,9 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
      * Sends a fetch request to load scene data. It updates the scenes hashmap directly.
      */
     const loadActiveScene$ = $(async ()=>{
+        if(!threeStore)
+            return;
+
         if(ctos[props.activeID]){
             return;
         }
@@ -122,44 +128,44 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
         const meshToDetails : {[key: string]: string} = {}; 
 
         // For each details, create a mesh and add it to the scene
-        props.details && Object.keys(props.details).forEach((key: string)=>{
+        Object.keys(props.details).forEach((key: string)=>{
             const mesh = threeStore.mesh?.clone() as THREE.Mesh;
             // Load material image from the details.imgUrl
             const textureLoader = new THREE.TextureLoader();
             const texture = textureLoader.load(props.details[key].imgURL);
             const material = new THREE.MeshStandardMaterial({map: texture, color: 0xffffff, roughness: 0.5, metalness: 0.5, flatShading:false});
-            if(mesh && texture && material ){
-                mesh.material = material; // Apply the material to the mesh
-                
-                // const ran = Math.random();
-                mesh.position.x = Math.random() * 10 - 5;
-                mesh.position.y = Math.random() * 10 - 5;
-                
-                // Check if the mesh position is close to any other mesh
-                let positioned = false;
-                for(;!positioned;){
-                    let passed = true;
-                    for(let i = 0; i < scene.children.length; i++){
-                        if(scene.children[i] instanceof THREE.Mesh && scene.children[i].position.distanceTo(mesh.position) < 2){
-                            mesh.position.x = Math.random() * 10 - 5;
-                            mesh.position.y = Math.random() * 10 - 5;
-                            passed = false;
-                            break;
-                        }
-                    }
-                    if(passed){
-                        positioned = true;
+            
+            mesh.material = material; // Apply the material to the mesh
+            
+            // const ran = Math.random();
+            mesh.position.x = Math.random() * 10 - 5;
+            mesh.position.y = Math.random() * 10 - 5;
+            
+            // Check if the mesh position is close to any other mesh
+            let positioned = false;
+            for(;!positioned;){
+                let passed = true;
+                for(let i = 0; i < scene.children.length; i++){
+                    if(scene.children[i] instanceof THREE.Mesh && scene.children[i].position.distanceTo(mesh.position) < 2){
+                        mesh.position.x = Math.random() * 10 - 5;
+                        mesh.position.y = Math.random() * 10 - 5;
+                        passed = false;
+                        break;
                     }
                 }
-
-                
-                mesh.rotation.x = Math.random() * 10 - 5;
-                mesh.rotation.y = Math.random() * 10 - 5;
-                
-                // mesh.position.z = Math.random() * 10 - 5;
-                meshToDetails[mesh.uuid] = key;
-                scene.add(mesh);
+                if(passed){
+                    positioned = true;
+                }
             }
+
+            
+            mesh.rotation.x = Math.random() * 10 - 5;
+            mesh.rotation.y = Math.random() * 10 - 5;
+            
+            // mesh.position.z = Math.random() * 10 - 5;
+            meshToDetails[mesh.uuid] = key;
+            scene.add(mesh);
+            
         });
 
         // scene.add(threeStore.mesh.clone());
@@ -177,6 +183,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
 
     useOn("mousemove", $((event: MouseEvent)=>{
+        if(!threeStore)
+            return;
         if(threeStore.mouse){
             threeStore.mouse.x = ( event.offsetX / canvasStore.width ) * 2 - 1;
             threeStore.mouse.y = - ( event.offsetY / canvasStore.height ) * 2 + 1;
@@ -192,6 +200,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     const finalZ = 0;
 
     const intersectedMesh$ = $(()=>{
+        if(!threeStore)
+            return;
         if(threeStore.raycaster === undefined){
             throw new Error("Raycaster not defined");
         }
@@ -211,6 +221,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
 
     const animateCoins$ = $(async ()=>{
+        if(!threeStore)
+            return;
         const chosenMesh = await intersectedMesh$();
         if(chosenMesh){
             canvasRef.value?.style.setProperty('cursor', 'pointer');
@@ -260,6 +272,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
      * Renders the active scene using the renderer.
      */
     const render$ = $(()=>{
+        if(!threeStore)
+            return;
         threeStore.camera && threeStore.renderer?.render(ctos[props.activeID].scene, threeStore.camera);
     })
 
@@ -287,6 +301,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
 
     const onClick$ = $(async ()=>{
+        if(!threeStore)
+            return;
         if(threeStore.raycaster === undefined){
             throw new Error("Raycaster not defined");
         }

@@ -1,4 +1,4 @@
-import { QRL, component$, useStyles$ } from "@builder.io/qwik";
+import { type QRL, component$, useStyles$ } from "@builder.io/qwik";
 import IndexCSS from "./index.css?inline";
 
 
