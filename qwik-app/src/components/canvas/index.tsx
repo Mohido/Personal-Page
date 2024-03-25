@@ -127,14 +127,34 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
             // Load material image from the details.imgUrl
             const textureLoader = new THREE.TextureLoader();
             const texture = textureLoader.load(props.details[key].imgURL);
-            const material = new THREE.MeshStandardMaterial({map: texture});
+            const material = new THREE.MeshStandardMaterial({map: texture, color: 0xffffff, roughness: 0.5, metalness: 0.5, flatShading:false});
             if(mesh && texture && material ){
                 mesh.material = material; // Apply the material to the mesh
-                const ran = Math.random();
-                mesh.position.x = ran * 10 - 5;
-                mesh.position.y = ran * 10 - 5;
-                mesh.rotation.x = ran * 10 - 5;
-                mesh.rotation.y = ran * 10 - 5;
+                
+                // const ran = Math.random();
+                mesh.position.x = Math.random() * 10 - 5;
+                mesh.position.y = Math.random() * 10 - 5;
+                
+                // Check if the mesh position is close to any other mesh
+                let positioned = false;
+                for(;!positioned;){
+                    let passed = true;
+                    for(let i = 0; i < scene.children.length; i++){
+                        if(scene.children[i] instanceof THREE.Mesh && scene.children[i].position.distanceTo(mesh.position) < 2){
+                            mesh.position.x = Math.random() * 10 - 5;
+                            mesh.position.y = Math.random() * 10 - 5;
+                            passed = false;
+                            break;
+                        }
+                    }
+                    if(passed){
+                        positioned = true;
+                    }
+                }
+
+                
+                mesh.rotation.x = Math.random() * 10 - 5;
+                mesh.rotation.y = Math.random() * 10 - 5;
                 
                 // mesh.position.z = Math.random() * 10 - 5;
                 meshToDetails[mesh.uuid] = key;
