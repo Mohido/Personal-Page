@@ -125,7 +125,7 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
             // Load material image from the details.imgUrl
             const textureLoader = new THREE.TextureLoader();
             const texture = textureLoader.load(props.details[key].imgURL);
-            const material = new THREE.MeshBasicMaterial({map: texture});
+            const material = new THREE.MeshStandardMaterial({map: texture});
             if(mesh && texture && material ){
                 mesh.material = material; // Apply the material to the mesh
                 const ran = Math.random();
@@ -142,9 +142,12 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
 
         // scene.add(threeStore.mesh.clone());
         // add light
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(0, 0, 1);
+        const light = new THREE.DirectionalLight(0xffffff, 4);
+        light.position.set(0, 1, 1);
+        light.castShadow = true;
         scene.add(light);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // Soft, uniform light
+        scene.add(ambientLight);
         ctos[props.activeID] = {
            scene : scene,
             meshToDetails : meshToDetails
