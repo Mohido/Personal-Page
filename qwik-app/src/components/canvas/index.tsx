@@ -1,4 +1,4 @@
-import { $, component$, noSerialize, useOn, useSignal, useStore, useStyles$, useVisibleTask$ } from "@builder.io/qwik";
+import { $, QRL, component$, noSerialize, useOn, useSignal, useStore, useStyles$, useVisibleTask$ } from "@builder.io/qwik";
 import IndexCSS from "./index.css?inline";
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
@@ -38,7 +38,9 @@ export interface Canvas3DProps{
         title : string,
         imgURL : string,
         description : string
-    }}
+    }};
+    onClick$ : QRL<(title: string) => void>; // Represents the mesh title clicked
+
 }
 
 
@@ -142,7 +144,7 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
 
         // scene.add(threeStore.mesh.clone());
         // add light
-        const light = new THREE.DirectionalLight(0xffffff, 4);
+        const light = new THREE.DirectionalLight(0xffffff, 5);
         light.position.set(0, 1, 1);
         light.castShadow = true;
         scene.add(light);
@@ -153,7 +155,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
             meshToDetails : meshToDetails
         }
     });
-
 
     useOn("mousemove", $((event: MouseEvent)=>{
         if(threeStore.mouse){
@@ -169,7 +170,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     const finalY = -Math.PI/2 + 0.1;
     const finalX = Math.PI/2;
     const finalZ = 0;
-    const animateCoins$ = $(()=>{
+
+    const intersectedMesh$ = $(()=>{
         if(threeStore.raycaster === undefined){
             throw new Error("Raycaster not defined");
         }
@@ -180,20 +182,22 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
 
         // Calculate objects intersected by the ray
         const intersects = threeStore.raycaster.intersectObjects(ctos[props.activeID].scene.children);
-        
-        let chosenMesh : THREE.Mesh | undefined = undefined;
         for (let i = 0; i < intersects.length; i++) {
             if (intersects[i].object instanceof THREE.Mesh) {
-                chosenMesh = intersects[i].object as THREE.Mesh;
-                // console.log("Mouse is over the mesh: ", chosenMesh);
-                canvasRef.value?.style.setProperty('cursor', 'pointer');
-                break;
+                return intersects[i].object as THREE.Mesh;
             }
+        }
+        return undefined;
+    });
+
+    const animateCoins$ = $(async ()=>{
+        const chosenMesh = await intersectedMesh$();
+        if(chosenMesh){
+            canvasRef.value?.style.setProperty('cursor', 'pointer');
         }
         if(!chosenMesh){
             canvasRef.value?.style.setProperty('cursor', 'default');
         }
-
         // Rotate the mesh if the mouse is not pointed to it
         ctos[props.activeID].scene.traverse((object: THREE.Object3D) => {
             if (object instanceof THREE.Mesh && object !== chosenMesh) { 
@@ -262,7 +266,20 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
         cleanup(()=> cancelAnimationFrame(handle));
     });
 
+    const onClick$ = $(async ()=>{
+        if(threeStore.raycaster === undefined){
+            throw new Error("Raycaster not defined");
+        }
+        // Calculate objects intersected by the ray
+        const chosenMesh = await intersectedMesh$();
+        const meshMap = ctos[props.activeID].meshToDetails;
+        if(chosenMesh && meshMap){
+            const title = meshMap[chosenMesh.uuid];
+            props.onClick$(title);
+        }
+    });
+
     return (
-        <canvas ref={canvasRef} class="canvas3d"></canvas>
+        <canvas onClick$={onClick$} ref={canvasRef} class="canvas3d"></canvas>
     );
 });
