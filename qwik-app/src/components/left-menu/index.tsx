@@ -26,7 +26,7 @@ export const LeftMenu = component$((props: LeftMenuProps) => {
             </ul>
             <div class="footer">
                 {/* Copyright message */}
-                <p>&copy; 2022 Mohammed Al-Mahdawi. All rights reserved.</p>
+                <p>&copy; 2024 Mohammed Al-Mahdawi. All rights reserved.</p>
             </div>
         </div>
     );

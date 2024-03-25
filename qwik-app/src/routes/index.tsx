@@ -22,19 +22,33 @@ export default component$(() => {
           imgURL: "https://logo.clearbit.com/nokia.com",
           title: "Software Developer (Nokia) [2021 - 2023]",
           description:
-            "Nokia Corporation is a Finnish multinational telecommunications, information technology, and consumer electronics company, founded in 1865.",
+            "Nokia Corporation is a Finnish multinational telecommunications, information technology, and consumer electronics company, founded in 1865. And, there I did the following:" +
+            "○ Contributed to the maintenance and enhancement of a large-scale, cloud-native Platform as a Service (PaaS) that integrates 100+ Cloud Service Functions, demonstrating scalability and flexibility." +
+            "○ Engaged in system engineering and DevOps practices, utilizing Python automation, REST API development, Docker, Terraform and Ansible for optimal service management across 3 to 16 node environments." +
+            "○ Addressed critical MariaDB issues, including brain-splits in a 3-node setup, ensuring database integrity and high availability." +
+            "○ Participated in agile project management, facilitating faster production through continuous integration and delivery practices." +
+            "○ Assisted in solving intricate networking, system, and coding challenges, enhancing system efficiency and user satisfaction."
+            ,
         },
         ericsson : {
           imgURL: "https://logo.clearbit.com/ericsson.com",
           title: "Senior Software Developer (Ericsson) [2024 - Present]",
           description:
-            "Ericsson is a Swedish multinational networking and telecommunications company headquartered in Stockholm.",
+            "Ericsson is a Swedish multinational networking and telecommunications company headquartered in Stockholm. There, I did the following: \n" +
+            "○ Played a crucial role in developing a critical distributed Virtual Network Function (VNF) within the IMS network, deployed across over 20 virtual machines to enhance network efficiency and scalability.\n"+
+            "○ Leveraged Erlang/OTP for robust runtime environment management and Python for effective automation processes, contributing to operational efficiency.\n" +
+            "○ Managed hundreds of concurrent processes, resolving complex issues such as race conditions and deadlocks, thereby ensuring system reliability and stability.\n" +
+            "○ Adopted Agile methodologies to support a continuous development and deployment cycle, significantly reducing time-to-market for new features and updates.\n",
         },
         elte : {
           imgURL: "https://upload.wikimedia.org/wikipedia/en/a/af/ELTE_logo.png",
           title: "Teacher Assistant (ELTE) [2021 - 2022]",
           description:
-            "Eötvös Loránd University is a Hungarian public research university based in Budapest.",
+            `Eötvös Loránd University is a Hungarian public research university based in Budapest. And there I did:
+            ○ Introduced over 100 students to functional programming paradigms using the Clean Programming Language, enriching the academic curriculum and fostering a deeper understanding of programming concepts.
+            ○ Provided more than 20 comprehensive consultations on complex data structures and algorithms, enhancing students’ problemsolving skills.
+            ○ Created and administered 4 examinations, assessing and grading students’ understanding and application of functional programming concepts, contributing to their academic success.
+            `,
         }
       },
       "Programming": {
