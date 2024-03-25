@@ -18,7 +18,11 @@ export default component$(() => {
   return (
     <div class="container">
       <LeftMenu items={["Home", "About", "Contact"]} onClick$={leftMenuClick$}/>
-      <Canvas3D activeID={activeID.value}/>
+      <Canvas3D details={{nokia : {
+          imgURL: "https://logo.clearbit.com/nokia.com",
+          title: "Nokia",
+          description: "Nokia Corporation is a Finnish multinational telecommunications, information technology, and consumer electronics company, founded in 1865."
+      }}} activeID={activeID.value}/>
     </div>
   );
 });
