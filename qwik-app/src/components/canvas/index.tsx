@@ -128,8 +128,12 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
             const material = new THREE.MeshBasicMaterial({map: texture});
             if(mesh && texture && material ){
                 mesh.material = material; // Apply the material to the mesh
-                // mesh.position.x = Math.random() * 10 - 5;
-                // mesh.position.y = Math.random() * 10 - 5;
+                const ran = Math.random();
+                mesh.position.x = ran * 10 - 5;
+                mesh.position.y = ran * 10 - 5;
+                mesh.rotation.x = ran * 10 - 5;
+                mesh.rotation.y = ran * 10 - 5;
+                
                 // mesh.position.z = Math.random() * 10 - 5;
                 meshToDetails[mesh.uuid] = key;
                 scene.add(mesh);
