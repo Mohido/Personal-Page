@@ -8,8 +8,35 @@
 .canvas3d {
     min-width: 0;
     /* modern dark color for background */
-    background-color: rgb(12, 8, 22);
     
     flex:1;
     box-sizing: border-box;
+}
+
+
+.star {
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+    width: 2px;
+    height: 2px;
+    z-index: -2;
+    box-shadow: 0 0 2px white;
+    animation: twinkle 1s infinite;
+}
+
+
+@keyframes twinkle {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
 }

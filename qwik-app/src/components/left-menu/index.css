@@ -18,7 +18,7 @@
     border-radius: 50%;
     border: 1px solid rgb(210, 210, 199);
     /* background-color: #ccc; */
-    background-image: url('/profile_picture.jpg');
+    /* background-image: url('/profile_picture.jpg'); */
     background-size: cover;
     margin-bottom: 50px;
     margin-top: 50px;
@@ -46,4 +46,17 @@
     cursor: pointer;
     margin: 15px 0;
     list-style-type: none;
+}
+
+.left-menu .footer {
+    bottom: 0;
+    font-size: 14px;
+    /* display: flex; */
+    margin-bottom: 10px;
+    width: 80%;
+    text-align: center;
+    flex:1;
+    display: flex;
+    justify-content: center;
+    align-items: end;
 }

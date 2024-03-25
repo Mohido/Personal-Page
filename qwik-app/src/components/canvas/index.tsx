@@ -2,6 +2,7 @@ import { $, type QRL, component$, noSerialize, useOn, useSignal, useStore, useSt
 import IndexCSS from "./index.css?inline";
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { useLocation } from "@builder.io/qwik-city";
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import style from './style.css?inline';
 
@@ -15,11 +16,11 @@ export interface Canvas3DStore{
 }
 
 export interface Canvas3DNonSerializableStore{
-    renderer? : THREE.WebGLRenderer,
-    camera? : THREE.PerspectiveCamera,
-    mesh? : THREE.Mesh  // The mesh which will be instanced from
-    raycaster? : THREE.Raycaster,
-    mouse? : THREE.Vector2
+    renderer? : NoSerialize<THREE.WebGLRenderer>,
+    camera? : NoSerialize<THREE.PerspectiveCamera>,
+    mesh? :  NoSerialize<THREE.Mesh>,  // The mesh which will be instanced from
+    raycaster? :  NoSerialize<THREE.Raycaster>,
+    mouse? :  NoSerialize<THREE.Vector2>
 }
 
 
@@ -46,6 +47,7 @@ export interface Canvas3DProps{
 
 export const Canvas3D = component$((props: Canvas3DProps) => {
     useStyles$(IndexCSS);
+    const loc = useLocation();
     const canvasRef = useSignal<HTMLCanvasElement>();       // Referenced for the WebGLRenderer
     // const containerRef = useSignal<HTMLDivElement>();       // Referenced for updating the size
     const canvasStore = useStore<Canvas3DStore>({
@@ -55,15 +57,13 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     
     // canvas to scene hashmap. Each key represents a scene
     const ctos : {[key: string]: Canvas3D} = {};
-    const threeStore : NoSerialize<Canvas3DNonSerializableStore> = noSerialize<Canvas3DNonSerializableStore>({});
+    const threeStore :  Canvas3DNonSerializableStore = {};
 
 
     /**
      * used to initialize the renderer and the camera if they are not yet initialized. 
      */
     const initRenderer$ = $(async ()=>{
-        if(!threeStore)
-            return;
         // Create Renderer
         if(!threeStore.renderer){
             canvasStore.width = canvasRef.value?.clientWidth || 500;
@@ -75,18 +75,21 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
         
         // Create Camera
         if(!threeStore.camera){
-            threeStore.camera = new THREE.PerspectiveCamera( 75, canvasStore.width / canvasStore.height, 0.1, 1000 );
+            threeStore.camera = noSerialize(new THREE.PerspectiveCamera( 75, canvasStore.width / canvasStore.height, 0.1, 1000 ));
+            if(threeStore.camera === undefined){
+                throw new Error("Camera is not defined");
+            }
             threeStore.camera.position.z = 10;
             // canvasStore.controls = noSerialize(new OrbitControls(canvasStore.camera, canvasStore.renderer?.domElement)); 
         }
 
         // Load the mesh
         const objLoader = new OBJLoader();
-        threeStore.mesh = (await objLoader.loadAsync(`/coin.obj`)).children[0] as THREE.Mesh; 
+        threeStore.mesh = noSerialize((await objLoader.loadAsync(`${loc.url.origin}/coin.obj`)).children[0] as THREE.Mesh); 
 
         // Create Raycaster and Mouse
-        threeStore.raycaster =new THREE.Raycaster();
-        threeStore.mouse = new THREE.Vector2();
+        threeStore.raycaster = noSerialize(new THREE.Raycaster());
+        threeStore.mouse = noSerialize(new THREE.Vector2());
     });
 
     
@@ -95,9 +98,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
      * Used to resize the renderer in case the canvasStore is not equal to the props.
      */
     const resizeRenderer$ = $(()=>{
-        if(!threeStore)
-            return;
-
         if( canvasStore.width !== canvasRef.value?.clientWidth || canvasStore.height !== canvasRef.value?.clientHeight){
             canvasStore.height = canvasRef.value?.clientHeight || 500;
             canvasStore.width = canvasRef.value?.clientWidth || 500;
@@ -113,9 +113,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
      * Sends a fetch request to load scene data. It updates the scenes hashmap directly.
      */
     const loadActiveScene$ = $(async ()=>{
-        if(!threeStore)
-            return;
-
         if(ctos[props.activeID]){
             return;
         }
@@ -171,7 +168,7 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
         // scene.add(threeStore.mesh.clone());
         // add light
         const light = new THREE.DirectionalLight(0xffffff, 5);
-        light.position.set(0, 1, 1);
+        light.position.set(0, 0, 2);
         light.castShadow = true;
         scene.add(light);
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // Soft, uniform light
@@ -183,8 +180,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
 
     useOn("mousemove", $((event: MouseEvent)=>{
-        if(!threeStore)
-            return;
         if(threeStore.mouse){
             threeStore.mouse.x = ( event.offsetX / canvasStore.width ) * 2 - 1;
             threeStore.mouse.y = - ( event.offsetY / canvasStore.height ) * 2 + 1;
@@ -200,8 +195,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     const finalZ = 0;
 
     const intersectedMesh$ = $(()=>{
-        if(!threeStore)
-            return;
         if(threeStore.raycaster === undefined){
             throw new Error("Raycaster not defined");
         }
@@ -221,8 +214,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
 
     const animateCoins$ = $(async ()=>{
-        if(!threeStore)
-            return;
         const chosenMesh = await intersectedMesh$();
         if(chosenMesh){
             canvasRef.value?.style.setProperty('cursor', 'pointer');
@@ -272,8 +263,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
      * Renders the active scene using the renderer.
      */
     const render$ = $(()=>{
-        if(!threeStore)
-            return;
         threeStore.camera && threeStore.renderer?.render(ctos[props.activeID].scene, threeStore.camera);
     })
 
@@ -301,8 +290,6 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
 
     const onClick$ = $(async ()=>{
-        if(!threeStore)
-            return;
         if(threeStore.raycaster === undefined){
             throw new Error("Raycaster not defined");
         }
@@ -316,6 +303,20 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
 
     return (
+        <>
         <canvas onClick$={onClick$} ref={canvasRef} class="canvas3d"></canvas>
+            {
+                // Creaing html,css glowy stars
+                Array.from({length: 50}).map((_, index)=>{
+                    const left = Math.random() * ( 100);
+                    const top = Math.random() * ( 100);
+                    const dur = (Math.random() * 2 + 1) + "s";
+                    const del = (Math.random() * 2) + "s";
+                    return <span class="star" key={index} style={`z-index:-1; left: ${left}%; top:${top}%; animation-duration: ${dur}; animation-delay: ${del}`}></span>
+                    }
+                )
+            }
+            
+        </>
     );
 });
