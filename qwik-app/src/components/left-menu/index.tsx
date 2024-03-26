@@ -1,5 +1,6 @@
-import { QRL, component$, useStyles$ } from "@builder.io/qwik";
+import { type QRL, component$, useStyles$ } from "@builder.io/qwik";
 import IndexCSS from "./index.css?inline";
+import { useLocation } from "@builder.io/qwik-city";
 
 
 export interface LeftMenuProps {
@@ -11,9 +12,10 @@ export interface LeftMenuProps {
 
 export const LeftMenu = component$((props: LeftMenuProps) => {
     useStyles$(IndexCSS);
+    const loc = useLocation();
     return (
         <div class="left-menu">
-            <div class="profile-image"></div>
+            <div class="profile-image" style={`background-image: url(${loc.url.origin}/profile_picture.jpg)`}></div>
             <h1 class="header">Mohido</h1>
             <ul>
                 {props.items.map((item) => (
@@ -22,6 +24,10 @@ export const LeftMenu = component$((props: LeftMenuProps) => {
                     </li>
                 ))}
             </ul>
+            <div class="footer">
+                {/* Copyright message */}
+                <p>&copy; 2024 Mohammed Al-Mahdawi. All rights reserved.</p>
+            </div>
         </div>
     );
 });
