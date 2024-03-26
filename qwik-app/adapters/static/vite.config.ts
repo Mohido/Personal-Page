@@ -12,7 +12,7 @@ export default extendConfig(baseConfig, () => {
     },
     plugins: [
       staticAdapter({
-        origin: "http://127.0.0.1:5501",
+        origin: "https://mohido.github.io", // This is the origin of the built code
       }),
     ],
   };
