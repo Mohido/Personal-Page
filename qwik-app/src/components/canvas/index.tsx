@@ -114,7 +114,7 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
             return;
         }
         
-        console.log("Loading Scene: ", props.activeID);
+        // console.log("Loading Scene: ", props.activeID);
         if(threeStore.mesh === undefined){
             throw new Error("Mesh not loaded yet");
         }
@@ -160,10 +160,10 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
             // mesh.position.z = Math.random() * 10 - 5;
             meshToDetails[mesh.uuid] = key;
             scene.add(mesh);
-            console.log("Added Mesh: ", mesh.uuid, " to key: ", key);
+            // console.log("Added Mesh: ", mesh.uuid, " to key: ", key);
         });
 
-        console.log("Done Creating Meshes : ", props.details);
+        // console.log("Done Creating Meshes : ", props.details);
 
         // scene.add(threeStore.mesh.clone());
         // add light
