@@ -203,7 +203,7 @@ export default component$(() => {
     <>
       <div class="container">
         <LeftMenu items={Object.keys(details)} onClick$={leftMenuClick$}/>
-        <Canvas3D onClick$={(title)=> updateModalStore$(true, title)} details={details[activeID.value]} activeID={activeID.value}/>
+        <Canvas3D onClick$={(title)=> updateModalStore$(true, title)} details={details} activeID={activeID.value}/>
       </div>
       {
         modalStore.active && 

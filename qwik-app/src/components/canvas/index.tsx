@@ -3,6 +3,7 @@ import IndexCSS from "./index.css?inline";
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { useLocation } from "@builder.io/qwik-city";
+import { DetailsMap } from "~/routes";
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import style from './style.css?inline';
 
@@ -27,7 +28,7 @@ export interface Canvas3DNonSerializableStore{
 /**
  * Stores a specific scene and mesh
  */
-export interface Canvas3D{
+export interface Canvas3DScene{
     scene : THREE.Scene;
     meshToDetails? : {[key: string]: string}  // mesh to title hashmap. This is used when a mesh is clicked on to view the details.
 }
@@ -35,11 +36,7 @@ export interface Canvas3D{
 
 export interface Canvas3DProps{
     activeID : string;
-    details : {[key: string]: { // The details of every mesh. This is used for popups and modals
-        title : string,
-        imgURL : string,
-        description : string
-    }};
+    details : {[key:string]:DetailsMap};
     onClick$ : QRL<(title: string) => void>; // Represents the mesh title clicked
 
 }
@@ -56,7 +53,7 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
     });
     
     // canvas to scene hashmap. Each key represents a scene
-    const ctos : {[key: string]: Canvas3D} = {};
+    const ctos : {[key: string]: Canvas3DScene} = {};
     const threeStore :  Canvas3DNonSerializableStore = {};
 
 
@@ -116,7 +113,8 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
         if(ctos[props.activeID]){
             return;
         }
-
+        
+        console.log("Loading Scene: ", props.activeID);
         if(threeStore.mesh === undefined){
             throw new Error("Mesh not loaded yet");
         }
@@ -125,11 +123,11 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
         const meshToDetails : {[key: string]: string} = {}; 
 
         // For each details, create a mesh and add it to the scene
-        Object.keys(props.details).forEach((key: string)=>{
+        Object.keys(props.details[props.activeID]).forEach((key: string)=>{
             const mesh = threeStore.mesh?.clone() as THREE.Mesh;
             // Load material image from the details.imgUrl
             const textureLoader = new THREE.TextureLoader();
-            const texture = textureLoader.load(props.details[key].imgURL);
+            const texture = textureLoader.load(props.details[props.activeID][key].imgURL);
             const material = new THREE.MeshStandardMaterial({map: texture, color: 0xffffff, roughness: 0.5, metalness: 0.5, flatShading:false});
             
             mesh.material = material; // Apply the material to the mesh
@@ -162,8 +160,10 @@ export const Canvas3D = component$((props: Canvas3DProps) => {
             // mesh.position.z = Math.random() * 10 - 5;
             meshToDetails[mesh.uuid] = key;
             scene.add(mesh);
-            
+            console.log("Added Mesh: ", mesh.uuid, " to key: ", key);
         });
+
+        console.log("Done Creating Meshes : ", props.details);
 
         // scene.add(threeStore.mesh.clone());
         // add light
