@@ -1,16 +1,17 @@
-.canvas3d-container {
+/* .canvas3d-container {
     background-color: violet;
     flex: 1;
-    
-}
+} */
 
 
 .canvas3d {
     min-width: 0;
     /* modern dark color for background */
-    
-    flex:1;
+    /* flex-basis: 512px; */
+    flex:2;
+    min-width: 400px;
     box-sizing: border-box;
+    height: 100vh;
 }
 
 

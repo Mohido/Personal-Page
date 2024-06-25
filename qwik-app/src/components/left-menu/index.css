@@ -3,12 +3,15 @@
     background-color: rgb(38, 33, 33);
     display: flex;
     flex-direction: column;
-    flex:.25;
+    flex: 1;
     height: 100vh;
     align-items: center;
     color: rgb(222, 220, 220);
     box-sizing: border-box;
     padding: 20px;
+    overflow: hidden;
+    min-width: 300px;
+    max-width: 400px;
 }
 
 /* Styles for the circular image */
@@ -60,3 +63,16 @@
     justify-content: center;
     align-items: end;
 }
+
+
+/* Responsive styles */
+@media screen and (max-width: 720px) {
+    .left-menu {
+        max-height: 0; /* Hide the menu by default on small screens */
+        max-width: auto;
+
+        padding: 0px;
+    }
+}
+
+
