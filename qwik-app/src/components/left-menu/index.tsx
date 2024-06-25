@@ -52,7 +52,10 @@ export const LeftMenu = component$((props: LeftMenuProps) => {
                 <h1 class="header">Mohido</h1>
                 <ul>
                     {props.items.map((item) => (
-                        <li class="menu-item" key={item} onClick$={() => props.onClick$(item)}>
+                        <li class="menu-item" key={item} onClick$={() => {
+                                (window.innerWidth < 720 && (hidclas.value = "hidden-menu"));
+                                props.onClick$(item)}
+                            }>
                             {item}
                         </li>
                     ))}
