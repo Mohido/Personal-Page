@@ -11,6 +11,7 @@
     padding: 20px;
     overflow: hidden;
     min-width: 300px;
+    transition: .25s ease-in-out;
     max-width: 400px;
 }
 
@@ -65,13 +66,39 @@
 }
 
 
+.menu-toggle-button{
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top : 0;
+    font-size: 3em;
+    color: white;
+    cursor: pointer;
+    display: none;
+}
+
+
+.hidden-menu{
+    /* background-color: blue; */
+    max-height: 0; /* Hide the menu by default on small screens */
+}
+
+.shown-menu{
+    /* background-color: green; */
+    max-height: 100vh;
+}
+
 /* Responsive styles */
 @media screen and (max-width: 720px) {
+    .menu-toggle-button{
+        display: block;
+    }
+    
     .left-menu {
-        max-height: 0; /* Hide the menu by default on small screens */
         max-width: auto;
-
+        position: fixed;
         padding: 0px;
+        min-width: 100vw;
     }
 }
 

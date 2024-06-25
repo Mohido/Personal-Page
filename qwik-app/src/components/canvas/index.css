@@ -5,7 +5,6 @@
 
 
 .canvas3d {
-    min-width: 0;
     /* modern dark color for background */
     /* flex-basis: 512px; */
     flex:2;
@@ -41,3 +40,10 @@
         opacity: 1;
     }
 }
+
+@media screen and (max-width: 720px) {
+    .canvas3d{
+        min-width: 250px;
+    }
+}
+
